@@ -1,9 +1,26 @@
-from itertools import combinations
 import pandas as pd
 import time
 
 
 def main():
+
+    def n_length_combo(lst, n):
+        # print("n: ", n)
+        if n == 0:
+            return [[]]
+        l = []
+        # print("lst: ", lst)
+        print("len(lst): ", len(lst))
+        for i in range(0, len(lst)):  # 0,1,2,3
+            # print("   lst[i]: ", lst[i])
+            m = lst[i]  # A
+            remLst = lst[i + 1:]  # ['B', 'C', 'D']
+            # print("   remLst: ", remLst)
+            for p in n_length_combo(remLst, n-1):
+                # print("     p: ", p)
+                l.append([m]+p)
+                # print("     l: ", l)
+        return l
 
     column_names = ['action id', 'action cost', '2y benefit (%)']
 
@@ -27,9 +44,12 @@ def main():
 
     # For each length L in the total number of stocks:
     # O(n^2) + 3n
+
     for L in range(0, len(stocks_dict)+1):
         # Get the subset of combinations of stocks of length L
-        for subset in combinations(stocks_dict, L):
+
+        for subset in n_length_combo(stocks_dict, L):
+            print("SUBSET: ", subset)
             # Convert the returned tuple to an a list
             stocks = list(subset)
             # for each subset of stocks, calculate the sum of costs and ROI

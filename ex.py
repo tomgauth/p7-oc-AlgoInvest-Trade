@@ -42,3 +42,31 @@ def combinations(iterable, r):
 
 for i in combinations(iterable, 3):
     print("RESULTS:   ", i)
+
+
+# Function to create combinations
+# without itertools
+# ['A', 'B', 'C', 'D']
+def n_length_combo(lst, n):
+    print("n: ", n)
+    if n == 0:
+        return [[]]
+    l = []
+    print("lst: ", lst)
+    print("len(lst): ", len(lst))
+    for i in range(0, len(lst)):  # 0,1,2,3
+        print("   lst[i]: ", lst[i])
+        m = lst[i]  # A
+        remLst = lst[i + 1:]  # ['B', 'C', 'D']
+        print("   remLst: ", remLst)
+        for p in n_length_combo(remLst, n-1):
+            print("     p: ", p)
+            l.append([m]+p)
+            print("     l: ", l)
+    return l
+
+
+# Driver code
+if __name__ == "__main__":
+    arr = "abc"
+    print(n_length_combo([x for x in arr], 2))
