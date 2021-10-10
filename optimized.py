@@ -1,43 +1,76 @@
+import sys
 import pandas as pd
 import time
 
 
+# run script from command line with dataset as arg
+# test
+
 def main():
+    # dataset = "stock_list.csv"
+    dataset = sys.argv[1]
+    W = int(sys.argv[2])
+    print(W)
+    W = W*100
+    # dataset = "dataset2_Python+P7.csv"
+    df = pd.read_csv(dataset, index_col=False)
 
-    column_names = ['action id', 'action cost', '2y benefit (%)']
-    df = pd.read_csv("stock_list.csv", index_col=False, names=column_names)
+    # cleaning up the dataset
+    # removing rows where price = 0
+    df = df[df.price != 0]
 
+    # reverting negative values
+    df['price'] = df['price'].abs()
     # This is the memoization approach of
     # 0 / 1 Knapsack in Python in simple
-    df['2y value'] = round(df['action cost'] * df['2y benefit (%)']/100, 2)
-    # driver code
-    val = df['2y value'].tolist()
-    wt = df['action cost'].tolist()
-    W = 500
+    df['2y value'] = round(df['price'] * df['profit']/100, 2)
+
+    ids = df['name'].tolist()
+    val = [int(i * 100) for i in df['2y value'].tolist()]
+    wt = [int(i * 100) for i in df['price'].tolist()]
+    print(val)
+    print(wt)
+
     n = len(val)
 
     best_stocks = []
+    total_cost = 0
 
     K = [[0 for w in range(W + 1)]
          for i in range(n + 1)]
 
+    # print(K)
+    print(len(K))
+    print("length: ", len(K[0]))
+
     # Creating a table of n*W
     # Fill each row (item) with the best value possible
     for i in range(n + 1):
+        print(i, "rows out of ", n + 1, " done.")
         for w in range(W + 1):
+            # print("col: ", w, " out of ", W + 1)
             if i == 0 or w == 0:
                 K[i][w] = 0
             elif wt[i - 1] <= w:
-                K[i][w] = round(max(val[i - 1]
-                                    + K[i - 1][w - wt[i - 1]],
-                                    K[i - 1][w]), 2)
+                # print("i: ", i)
+                # print("w: ", w)
+                # print("[i - 1]: ", i-1)
+                # print("wt[i - 1]: ", wt[i - 1])
+                # print("type(wt[i - 1]): ", type(wt[i - 1]))
+                # print("w - wt[i - 1]: ", w - wt[i - 1])
+                # print("K[i - 1][w - wt[i - 1]: ",
+                #       K[i - 1][round(w - wt[i - 1], 2)])
+                K[i][w] = round(max(
+                    val[i - 1] + K[i - 1][w - wt[i - 1]],
+                    K[i - 1][w]), 2)
             else:
                 K[i][w] = K[i - 1][w]
 
+    # print(pd.DataFrame(K))
     # stores the result
     # The value of K[n][W] (last row last column) is the highest
     res = round(K[n][W], 2)
-    print("Best 2y ROI is: ", res)
+    print("Best 2y ROI is: ", res/100)
 
     # Now lets got through the table to find which items
     # compose the highest value
@@ -56,17 +89,25 @@ def main():
         else:
 
             # This item is included.
-            best_stocks.append(i)
-
+            best_stocks.append(i - 1)
+            total_cost += K[i - 1][w]
             # Since this weight is included
             # its value is deducted
             res = round(res - val[i - 1], 2)
             w = w - wt[i - 1]
 
-    print("Best stocks IDs: ", best_stocks)
+    print("Best stocks IDs: ", [ids[i] for i in best_stocks])
+    print(best_stocks)
+    for stock_id in best_stocks:
+        stock = ids[stock_id]
+        print(df.loc[df['name'] == stock]['price'].values[0])
+        stock_value = df.loc[df['name'] == stock]['price'].values[0]
+        total_cost += stock_value
 
+    print("total Cost :", total_cost)
 
 if __name__ == "__main__":
     start_time = time.time()
+    print('Argument: {}'.format((sys.argv)))
     main()
     print("--- %s seconds ---" % (time.time() - start_time))
