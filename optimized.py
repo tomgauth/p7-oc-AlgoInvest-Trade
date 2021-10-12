@@ -1,6 +1,7 @@
 import sys
 import pandas as pd
 import time
+from math import floor
 
 
 # run script from command line with dataset as arg
@@ -11,7 +12,7 @@ def main():
     dataset = sys.argv[1]
 
     W = int(sys.argv[2])
-    print(W)
+    # print(W)
     W = W*100
     # dataset = "dataset1_Python+P7.csv"
     # dataset = "dataset2_Python+P7.csv"
@@ -29,14 +30,12 @@ def main():
     df['profit'] = df['profit']*100
     df['profit'] = df['profit'].astype(int)
 
-    df['2y value'] = df['price'] * df['profit'] / 100
-    df['2y value'] = df['2y value'].astype(int)
+    df['2y value'] = df['price'] * df['profit'] / 10000
+    # df['2y value'] = df['2y value'].apply(floor)
 
     ids = df['name'].tolist()
     val = [i for i in df['2y value'].tolist()]
     wt = [i for i in df['price'].tolist()]
-    print(val)
-    print(wt)
 
     n = len(val)
 
@@ -45,10 +44,6 @@ def main():
 
     K = [[0 for w in range(W + 1)]
          for i in range(n + 1)]
-
-    # print(K)
-    print(len(K))
-    print("length: ", len(K[0]))
 
     # Creating a table of n*W
     # Fill each row (item) with the best value possible
@@ -76,8 +71,9 @@ def main():
     # print(pd.DataFrame(K))
     # stores the result
     # The value of K[n][W] (last row last column) is the highest
-    res = round(K[n][W], 2)
-    print("Best 2y ROI is: ", res/10000)
+    # res = round(K[n][W], 2)
+    res = K[n][W]
+    best_2y_roi = round(res / 100, 2)
 
     # Now lets got through the table to find which items
     # compose the highest value
@@ -102,15 +98,15 @@ def main():
             res = round(res - val[i - 1], 2)
             w = w - wt[i - 1]
 
-    print("Best stocks IDs: ", [ids[i] for i in best_stocks])
-    print(best_stocks)
     total_cost = sum(wt[i] for i in best_stocks)
-    print(total_cost)
-
+    print("---------------")
+    print("Best 2y ROI is: ", best_2y_roi)
+    print("Best stocks IDs: ", [ids[i] for i in best_stocks])
     print("total Cost :", total_cost/100)
+
 
 if __name__ == "__main__":
     start_time = time.time()
-    print('Argument: {}'.format((sys.argv)))
     main()
-    print("--- %s seconds ---" % (time.time() - start_time))
+    print("The algorithm took %s seconds to complete" %
+          (round((time.time() - start_time), 2)))
