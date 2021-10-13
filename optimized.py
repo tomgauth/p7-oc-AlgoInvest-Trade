@@ -1,7 +1,6 @@
 import sys
 import pandas as pd
 import time
-from math import floor
 
 
 # run script from command line with dataset as arg
@@ -23,12 +22,14 @@ def main():
     df = df[df.price >= 0]
 
     # reverting negative values
-    df['price'] = df['price']*100
-    df['price'] = df['price'].astype(int)
+    # df['price'] = df['price']*100
+    # df['price'] = df['price'].astype(int)
+    df['price'] = (df['price']*100).astype(int)
     # This is the memoization approach of
     # 0 / 1 Knapsack in Python in simple
-    df['profit'] = df['profit']*100
-    df['profit'] = df['profit'].astype(int)
+    # df['profit'] = df['profit']*100
+    # df['profit'] = df['profit'].astype(int)
+    df['profit'] = (df['profit']*100).astype(int)
 
     df['2y value'] = df['price'] * df['profit'] / 100
     # df['2y value'] = df['2y value'].apply(floor)
