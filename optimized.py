@@ -30,7 +30,7 @@ def main():
     df['profit'] = df['profit']*100
     df['profit'] = df['profit'].astype(int)
 
-    df['2y value'] = df['price'] * df['profit'] / 10000
+    df['2y value'] = df['price'] * df['profit'] / 100
     # df['2y value'] = df['2y value'].apply(floor)
 
     ids = df['name'].tolist()
@@ -100,9 +100,9 @@ def main():
 
     total_cost = sum(wt[i] for i in best_stocks)
     print("---------------")
-    print("Best 2y ROI is: ", best_2y_roi)
+    print("Best 2y ROI is: ", round(best_2y_roi/100, 2))
     print("Best stocks IDs: ", [ids[i] for i in best_stocks])
-    print("total Cost :", total_cost/100)
+    print("total Cost :", round(total_cost/100, 2))
 
 
 if __name__ == "__main__":
