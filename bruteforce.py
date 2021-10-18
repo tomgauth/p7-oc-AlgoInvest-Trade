@@ -27,6 +27,7 @@ def main():
     def n_length_combo(lst, n):
 
         # no (more) combinations possible, returns empty array
+        print("n :", n)
         if n == 0:
             return [[]]
         l = []
@@ -34,12 +35,18 @@ def main():
         for i in range(0, len(lst)):  # 0,1,2,3
             # take the first item
             m = lst[i]  # A
+            print("m :", m)
             # define the rest of the list
             remLst = lst[i + 1:]  # ['B', 'C', 'D']
             # recursively apply the same method for the
             # possible lengths on the remaining list
             for p in n_length_combo(remLst, n-1):
+                print("p :", p)
+                print("m :", m)
+                print("[m]+p :", [m]+p)
                 l.append([m]+p)
+                print("l :", l)
+
         # l will contain an array of arrays of possible combinations
         return l
 
