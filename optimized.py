@@ -3,9 +3,6 @@ import pandas as pd
 import time
 
 
-# run script from command line with dataset as arg
-# test
-
 def main():
 
     dataset = sys.argv[1]

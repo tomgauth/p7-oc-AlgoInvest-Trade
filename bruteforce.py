@@ -12,7 +12,7 @@ def main():
 
     def create_df(dataset_csv):
         # Import the data from a csv file as a pandas dataframe
-        df = pd.read_csv(dataset, index_col=False)
+        df = pd.read_csv(dataset_csv, index_col=False)
         # clean up the data set from negative or values equal to 0
         df = df[df['price'] >= 0]
         df['price'] = (df['price']*100).astype(int)
@@ -22,36 +22,21 @@ def main():
 
         return df
 
-    # n_length_combo(stocks_dict, L) returns an array of all
-    # possible combinations of length n
-    def n_length_combo(lst, n):
-
-        # no (more) combinations possible, returns empty array
-        print("n :", n)
-        if n == 0:
+    # Use a recursive approach to try all the combinations possible
+    #
+    def combinations(lst):
+        # not [] returns True, if the list is not empty, returns False
+        # print("lst: ", lst)
+        if not lst:
+            # Reached the bottom of the recursive tree
             return [[]]
-        l = []
-        # for each item in the given length
-        for i in range(0, len(lst)):  # 0,1,2,3
-            # take the first item
-            m = lst[i]  # A
-            print("m :", m)
-            # define the rest of the list
-            remLst = lst[i + 1:]  # ['B', 'C', 'D']
-            # recursively apply the same method for the
-            # possible lengths on the remaining list
-            for p in n_length_combo(remLst, n-1):
-                print("p :", p)
-                print("m :", m)
-                print("[m]+p :", [m]+p)
-                l.append([m]+p)
-                print("l :", l)
-
-        # l will contain an array of arrays of possible combinations
-        return l
-
-    # For each length L in the total number of stocks:
-    # O(n^2) + 3n
+        else:
+            # Keep going down the recursive tree
+            last_combo = combinations(lst[:-1])
+            # print("last_combo: ", last_combo)
+            # print("[lst[-1]: ", [lst[-1]])
+            # print("r for r in combo: ", [r for r in last_combo])
+            return last_combo + [r+[lst[-1]] for r in last_combo]
 
     def find_combinations(dataframe):
         # Convert the dataframe to an array of dictionnaries
@@ -59,28 +44,25 @@ def main():
         # Instantiate an emplty array options to store the different
         # combinations of stocks
         options = []
-        # get all the lengths of combinaitions possible
-        # (0 to total num of stocks)
-        for L in range(0, len(stocks_dict)+1):
-            print(L, "/", len(stocks_dict)+1)
-            # Get the subset of combinations of stocks of length L
-            for subset in n_length_combo(stocks_dict, L):
-                # Convert the returned tuple to an a list
-                stocks = list(subset)
-                # for each subset of stocks, calculate the sum of costs and ROI
-                cost = sum(stock['price'] for stock in stocks)
-                value = sum(stock['2y value'] for stock in stocks)
-                # Create a list of the stocks ids
-                stocks_ids = [stock['name'] for stock in stocks]
-                # Create a dict called option with the cost, roi and stocks IDs
-                # An option is a combination of stocks
-                option = {'totalcost': cost / 100,
-                          '2Y value': value / 10000,
-                          'Stocks IDs': stocks_ids}
-                # If the total cost of the option is less than 500,
-                # add it to the options list
-                if cost < W:
-                    options.append(option)
+
+        # Get the subset of combinations of stocks of length L
+        for subset in combinations(stocks_dict)[1:]:
+            # Convert the returned tuple to an a list
+            stocks = list(subset)
+            # for each subset of stocks, calculate the sum of costs and ROI
+            cost = sum(stock['price'] for stock in stocks)
+            value = sum(stock['2y value'] for stock in stocks)
+            # Create a list of the stocks ids
+            stocks_ids = [stock['name'] for stock in stocks]
+            # Create a dict called option with the cost, roi and stocks IDs
+            # An option is a combination of stocks
+            option = {'totalcost': cost / 100,
+                      '2Y value': value / 10000,
+                      'Stocks IDs': stocks_ids}
+            # If the total cost of the option is less than 500,
+            # add it to the options list
+            if cost < W:
+                options.append(option)
         return options
 
     # Export the sorted combinations of options into a csv file
