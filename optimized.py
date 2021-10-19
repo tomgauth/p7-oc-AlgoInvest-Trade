@@ -36,10 +36,11 @@ def main():
                 # first row and first column are filled with 0's
                 if i == 0 or w == 0:
                     K[i][w] = 0
-                # If the price of the cell above is less than the budget
-                # Remove the current budget w to the current price (column)
-                # Add to it the value of the currentcombination
-                # unless the value of the previous cell is higher
+                    """ If the price of the cell above is less than the budget
+                    Remove the current budget w to the current price (column)
+                    Add to it the value of the currentcombination
+                    unless the value of the previous cell is higher
+                    """
                 elif prices[i - 1] <= w:
                     K[i][w] = round(max(
                         values[i - 1] + K[i - 1][w - prices[i - 1]],
@@ -60,11 +61,12 @@ def main():
             # if res is 0, there are no more items possible
             if res <= 0:
                 break
-            # Checks the cell on the top, if the value is the same as
-            # the current cell, move up
-            # otherwise add the current item (row), remove the value
-            # of the item, find the next best item with this value available
-            # in the table
+            """ Checks the cell on the top, if the value is the same as
+            the current cell, move up
+            otherwise add the current item (row), remove the value
+            of the item, find the next best item with this value available
+            in the table
+            """
             if res == K[i - 1][w]:
                 continue
             else:

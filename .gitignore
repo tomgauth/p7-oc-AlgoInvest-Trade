@@ -2,3 +2,6 @@ output_options1.csv
 test.py
 test_dataset.csv
 bruteforce_one.py
+
+# files
+env/

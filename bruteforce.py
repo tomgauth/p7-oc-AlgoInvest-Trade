@@ -23,19 +23,14 @@ def main():
         return df
 
     # Use a recursive approach to try all the combinations possible
-    #
     def combinations(lst):
         # not [] returns True, if the list is not empty, returns False
-        # print("lst: ", lst)
         if not lst:
             # Reached the bottom of the recursive tree
             return [[]]
         else:
             # Keep going down the recursive tree
             last_combo = combinations(lst[:-1])
-            # print("last_combo: ", last_combo)
-            # print("[lst[-1]: ", [lst[-1]])
-            # print("r for r in combo: ", [r for r in last_combo])
             return last_combo + [r+[lst[-1]] for r in last_combo]
 
     def find_combinations(dataframe):
@@ -77,6 +72,8 @@ def main():
 
         # Export the table of sorted options to a csv file
         df_sorted_options.to_csv(output_csv)
+        # Print the value of the first row
+        print(df_sorted_options.iloc[0])
 
     dataframe = create_df(dataset)
     options = find_combinations(dataframe)
@@ -86,4 +83,5 @@ def main():
 if __name__ == "__main__":
     start_time = time.time()
     main()
-    print("--- %s seconds ---" % (time.time() - start_time))
+    print("The algorithm took %s seconds to complete" %
+          (round((time.time() - start_time), 2)))
